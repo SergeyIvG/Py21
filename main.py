@@ -1,110 +1,94 @@
-import math
+﻿# Задание 1
+# Создайте класс очереди для работы с символьными значениями.
 
+class Queue:
+    __characters = list()  # Список будет содержать символы
+    __size = 0
+    __capacity = 0
 
-#   Задание 1
-# Создать базовый класс Фигура с методом для подсчета площади.
-# Создать производные классы: прямоугольник, круг, прямоугольный треугольник, трапеция
-# со своими методами для подсчета площади.
-#   Задание 2
-# переопределить магические методы
-# int(возвращает площадь) и str (возвращает информацию о фигуре).
-class Figure:
-    def __init__(self, length):
-        self.length = self.input_len(length)    # длина фигуры
+    def __init__(self, capacity: int):
+        if capacity > 0:
+            self.__capacity = capacity
 
-    def input_len(self, number):
-        if str(number).isdigit():
-            return number
+    def enqueue(self, element: str):  # Метод для добавление элемента в очередь.
+        if self.__size < self.__capacity:
+            if element != '':  # Если ничего не ввели в очередь не добавляю
+                self.__characters.append(element[0])  # Если ввели больше одного символа в очередь добавляю первый
+                self.__size += 1
         else:
-            return 0
+            print('переполнение - добавление невозможно')
 
-    def area(self):
-        return self.length * 0  # площадь фигуры
+    def dequeue(self):  # Метод для удаления элемента из очереди.
+        if self.__size > 0:
+            popping = self.__characters.pop(0)
+            self.__size -= 1
+            return popping
+        else:
+            print('пусто - удаление невозможно')
+            return None
 
-    def __str__(self):
-        return f' Отрезок.\n' \
-               f' length: {self.length} \tДлина отрезка\n'
+    def get_capacity(self):
+        return self.__capacity
 
-    def __int__(self):
-        return int(self.area())
+    def get_size(self):
+        return self.__size
 
+    def is_empty(self):   # Метод для проверки очереди на пустоту.
+        if self.__size == 0:
+            return True
+        else:
+            return False
 
-class Rectangle(Figure):    # класс прямоугольник
-    def __init__(self, length, height):
-        super().__init__(length)   # длина от родителя
-        self.height = self.input_len(height)            # высота
+    def is_full(self):   # Метод для проверки очереди на заполнение.
+        if self.__size == self.__capacity:
+            return True
+        else:
+            return False
 
-    def area(self):
-        return self.length * self.height    # площадь прямоугольника
-
-    def __str__(self):
-        return f' Прямоугольник.\n' \
-               f' length: {self.length}  \tдлина первой стороны прямоугольника\n' \
-               f' height: {self.height}  \tдлина второй стороны прямоугольника\n'
-
-
-class Circle(Figure):           # класс круг
-    def __init__(self, radius):
-        super().__init__(radius)       # радиус записываем в свойство длина
-
-    def area(self):
-        return math.pi * (self.length ** 2)     # площадь круга
-
-    def __str__(self):
-        return f' Круг.\n' \
-               f' length: {self.length} \tрадиус круга\n'
+    def show(self):   # Метод для отображение всех элементов очереди на экран.
+        print(self.__characters)
 
 
-class Triangle(Figure):         # класс прямоугольный треугольник
-    def __init__(self, length, height):
-        super().__init__(length)  # длина от родителя
-        self.height = self.input_len(height)           # высота
-
-    def area(self):
-        return self.length * self.height * 0.5    # площадь прямоугольного треугольника
-
-    def __str__(self):
-        return f' Прямоугольный треугольник.\n' \
-               f' length: {self.length}  \tдлина первого катета\n' \
-               f' height: {self.height}  \tдлина второго катета\n'
+def menu_choice():    # Функция для отображение на экране меню выбора.
+    print('\n1 — проверка очереди на пустоту')
+    print('2 — проверка очереди на заполнение')
+    print('3 — добавление элемента в очередь')
+    print('4 — удаление элемента из очереди')
+    print('5 — отображение всех элементов очереди на экран')
+    print('0 — завершение работы программы\n')
+    return input('Выберите пункт меню: ')
 
 
-class Trapezoid(Figure):            # класс трапеция
-    def __init__(self, length_bottom, length_top, height):
-        super().__init__(length_bottom)  # длина первого основания
-        self.length_top = self.input_len(length_top)          # длина второго основания
-        self.height = self.input_len(height)                  # высота
+def choice_action(choice: int, obj: Queue):   # Функция для обработки выбранного в меню пункта.
+    if choice == 1:
+        if obj.is_empty():
+            print('Очередь пустая')
+        else:
+            print('Очередь не пустая')
+    elif choice == 2:
+        if obj.is_full():
+            print('Очередь заполнена')
+        else:
+            print('Очередь не заполнена')
+    elif choice == 3:
+        obj.enqueue(input('Введите символ для добавления: '))
+    elif choice == 4:
+        if obj.dequeue():
+            print('символ удален')
+    elif choice == 5:
+        obj.show()
+    else:
+        print('Программа завершила работу!')
+    return choice
 
-    def area(self):
-        return (self.length + self.length_top) * self.height / 2    # площадь трапеции
 
-    def __str__(self):
-        return f' Трапеция.\n' \
-               f' length: {self.length}  \t\tдлина нижнего основания\n' \
-               f' length_top: {self.length_top}  \tдлина верхнего основания\n' \
-               f' height: {self.height}  \t\tвысота\n'
-
-
-first_figure = Figure(3)
-first_rectangle = Rectangle(4, 5)
-first_circle = Circle(6)
-first_triangle = Triangle(7, 8)
-first_trapezoid = Trapezoid(12, 4, 9)
-print('Площадь посчитана через вызов метода класса')
-print(first_figure.area())
-print(first_rectangle.area())
-print(first_circle.area())
-print(first_triangle.area())
-print(first_trapezoid.area())
-print('\n__STR__')
-print(first_figure)
-print(first_rectangle)
-print(first_circle)
-print(first_triangle)
-print(first_trapezoid)
-print('\n__INT__')
-print(int(first_figure))
-print(int(first_rectangle))
-print(int(first_circle))
-print(int(first_triangle))
-print(int(first_trapezoid))
+line1 = Queue(5)
+exit = 1
+while exit:
+    try:
+        choice = int(menu_choice())
+    except ValueError:
+        print('Нужно ввести цифру от 0 до 5')
+        continue
+    if 0 <= choice <= 5:
+        exit = choice_action(choice, line1)
